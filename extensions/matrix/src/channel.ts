@@ -254,7 +254,7 @@ export const matrixPlugin: ChannelPlugin<ResolvedMatrixAccount> = {
       const groups = account.config.groups ?? account.config.rooms ?? {};
       const ids = Object.keys(groups)
         .map((raw) => normalizeMatrixDirectoryGroupId(raw))
-        .filter(Boolean)
+        .filter((id): id is string => Boolean(id))
         .filter((id) => (q ? id.toLowerCase().includes(q) : true))
         .slice(0, limit && limit > 0 ? limit : undefined)
         .map((id) => ({ kind: "group", id }) as const);

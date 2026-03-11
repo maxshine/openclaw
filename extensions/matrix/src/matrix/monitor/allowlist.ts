@@ -70,6 +70,8 @@ export type MatrixAllowListMatch = AllowlistMatch<
   "wildcard" | "id" | "prefixed-id" | "prefixed-user"
 >;
 
+type MatrixAllowListMatchSource = NonNullable<MatrixAllowListMatch["matchSource"]>;
+
 export function resolveMatrixAllowListMatch(params: {
   allowList: string[];
   userId?: string;
@@ -82,12 +84,12 @@ export function resolveMatrixAllowListMatch(params: {
     return { allowed: true, matchKey: "*", matchSource: "wildcard" };
   }
   const userId = normalizeMatrixUser(params.userId);
-  const candidates: Array<{ value?: string; source: MatrixAllowListMatch["matchSource"] }> = [
+  const candidates: Array<{ value?: string; source: MatrixAllowListMatchSource }> = [
     { value: userId, source: "id" },
     { value: userId ? `matrix:${userId}` : "", source: "prefixed-id" },
     { value: userId ? `user:${userId}` : "", source: "prefixed-user" },
   ];
-  return resolveAllowlistMatchByCandidates({ allowList, candidates });
+  return resolveAllowlistMatchByCandidates<MatrixAllowListMatchSource>({ allowList, candidates });
 }
 
 export function resolveMatrixAllowListMatches(params: { allowList: string[]; userId?: string }) {
